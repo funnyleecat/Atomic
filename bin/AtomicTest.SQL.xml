@@ -1,0 +1,54 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--所有脚本配置的根标签-->
+<ATOMIC>
+	<!--SQL语句配置标签-->
+	<!--  id：SQL语句ID，唯一标识了一条SQL语句的配置，正整数，唯一-->
+	<SQL id=1000>
+		<!--SQL语句标签-->
+		<!--index：SQL语句拼接序号，为正整数，该SQL下唯一-->
+		<!--注：标签内容为SQL语句的文本，且不能为空-->
+		<statment index=1>
+			create or replace procedure Test_dbutils_proc(in_user_id in number,
+			   in_out_flag_name in out varchar2,
+				out_password out varchar2,
+				out_group_id out number,
+				out_cursor out SYS_REFCURSOR) is
+			begin
+			  OPEN out_cursor FOR select *  from Test_dbutils t where t.user_id=in_user_id and t.lock_flag=in_out_flag_name;
+			  select t.user_name,t.user_pwd, t.group_id into in_out_flag_name,out_password,out_group_id
+			  from Test_dbutils t  where rownum=1 and t.user_id=in_user_id and t.lock_flag=in_out_flag_name;
+			end Test_dbutils_proc;
+		</statment>
+	</SQL>
+	
+	<SQL id=1001>
+		<statment index =1>
+			BEGIN 
+			   HKVMR_USER.Test_dbutils_proc(:IN_USER_ID, :IN_OUT_FLAG_NAME, :OUT_PASSWORD, :OUT_GROUP_ID, :OUT_CURSOR);
+			END;
+		</statment>
+		<!--必填参数标签-->
+		<!--name：参数名字，非空，取值必须符合C++变量命名规范-->
+		<!--type：参数类型，取值为：整型[INT]、浮点型[DOUBLE]、字符串[STRING]、游标[CURSOR]-->
+		<!--directoion：参数方向，取值为：入参[IN]、出入参[INOUT]和出参[OUT]-->
+		<!--default：参数默认值-->
+		<!--标签内容为SQL语句的文本，可为空，语句中的参数绑定需按照对应的绑定规则填写-->
+		<!--注：CURSOR类型只能作为出参-->
+		<!--注[作为IN参]：当接收的参数不存在，或是参数为空时，取默认值(若默认值再为空，则抛出异常)-->
+		<required index =2 name="IN_USER_ID" type="DOUBLE" directoion="IN" default=""></required>
+		<!--可选参数标签-->
+		<!--注[作为IN参]：当参数不存在时，本SQL及参数将会舍弃；否则正常拼接SQL与绑定参数(值为空时，绑定空值)-->
+		<optional index =3 name="IN_OUT_FLAG_NAME" type="STRING" directoion="INOUT"></optional>
+		<required index =4 name="OUT_PASSWORD" type="STRING" directoion="OUT" default=""></required>
+		<required index =5 name="OUT_GROUP_ID" type="DOUBLE" directoion="OUT" default=""></required>
+		<required index =6 name="OUT_CURSOR" type="CURSOR" directoion="OUT" default=""></required>
+	</SQL>
+
+	<SQL id=1002>
+		<statment index =1>select * from emhk_vmr_operlog o where o.user_id=:IN_USER_ID</statment>
+		<required index =2 name="IN_USER_ID" type="INT" directoion="IN" default=""></required>
+		<optional index =3 name="IN_FUNC_ID" type="STRING" directoion="IN">and o.oper_function=:IN_FUNC_ID</optional>
+		<statment index =4 >order by o.eitime desc</statment>
+	</SQL>
+	
+</ATOMIC>

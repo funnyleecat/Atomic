@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<DBGV>
+	<DBLogicNode UniqueId="AtomicTestDB">
+		<DBInstanceNode hostName="10.10.83.132" portNum="1521" dbName="shdevdb" usrName="HKVMR_USER" password="123456" rwType="RO" dbType="ORACLE" connectionNum="1" heartBeatCycle="300"/>
+		<DBInstanceNode hostName="10.10.83.132" portNum="1521" dbName="shdevdb" usrName="HKVMR_USER" password="123456" rwType="WO" dbType="ORACLE" connectionNum="1" heartBeatCycle="300"/>
+	</DBLogicNode>
+</DBGV>
