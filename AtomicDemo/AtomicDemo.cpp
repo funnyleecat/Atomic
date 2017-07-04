@@ -8,6 +8,7 @@ static void AtomicAndDBUtilsTest(const std::string& strDBUtilsConfFile, const st
     std::cout << "Begin Test Atomic and DBUtils..." << endl;
     try
     {
+        //throw Utils::CWorkException("code[%d]-%s", 222, "测试log");
         //DBUtils初始化
         DEMO_DBUTILS::CStatement::Initialize(strDBUtilsConfFile);
 
@@ -101,7 +102,25 @@ static void AtomicAndDBUtilsTest(const std::string& strDBUtilsConfFile, const st
 
 int main(int argc, char* argv[])
 {
-    AtomicAndDBUtilsTest("../bin/AtomicTest.DBUtils.xml", "../bin");
+#ifdef WIN32
+    std::string strDBUtilsConfFile = "../bin/AtomicTest.DBUtils.xml";
+    std::string strAtomicSQLDir = "../bin";
+#else
+    /*
+    注意1：make完成之后一定要 make copy！
+    注意2：DBUtils需要添加环境变量！！！
+    export NLS_LANG = "SIMPLIFIED CHINESE_CHINA.ZHS16GBK"
+    export OCI_PATH = "./"
+    注意3：输出结果乱码？不要慌张，由于NLS_LANG为GBK的，linux终端编码为utf8
+    所以解决办法1：NLS_LANG的值设置为SIMPLIFIED CHINESE_CHINA.UTF8；解决办法2：将输出结果>>到文件中
+    当然，这两个办法还是需要DBUtils修复环境变量值的判断，
+    即DT_DB_NLS_LANG_NAME取值不应写死为DT_DB_NLS_LANG_VALUE，其值只有NLS_LANG的上述2种之一即可
+    */
+    std::string strDBUtilsConfFile = "./AtomicTest.DBUtils.xml";
+    std::string strAtomicSQLDir = "./";
+#endif
+
+    AtomicAndDBUtilsTest(strDBUtilsConfFile, strAtomicSQLDir);
 
 #ifdef WIN32
     system("pause");
